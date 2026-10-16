@@ -5,6 +5,9 @@ import edu.eci.arsw.blueprints.model.Point;
 import edu.eci.arsw.blueprints.persistence.BlueprintNotFoundException;
 import edu.eci.arsw.blueprints.persistence.BlueprintPersistenceException;
 import edu.eci.arsw.blueprints.services.BlueprintsServices;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
@@ -23,12 +26,21 @@ public class BlueprintsAPIController {
     public BlueprintsAPIController(BlueprintsServices services) { this.services = services; }
 
     // GET /blueprints
+    @Operation(summary = "Lista tod")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Consulta exitosa")
+    })
     @GetMapping
     public ResponseEntity<Set<Blueprint>> getAll() {
         return ResponseEntity.ok(services.getAllBlueprints());
     }
 
     // GET /blueprints/{author}
+    @Operation(summary = "Lista por autor")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Consulta exitosa"),
+            @ApiResponse(responseCode = "400", description = "El author no existe o no tiene datos")
+    })
     @GetMapping("/{author}")
     public ResponseEntity<?> byAuthor(@PathVariable String author) {
         try {
@@ -39,6 +51,11 @@ public class BlueprintsAPIController {
     }
 
     // GET /blueprints/{author}/{bpname}
+    @Operation(summary = "Lista por autor y pname")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Consulta exitosa"),
+            @ApiResponse(responseCode = "400", description = "El author no existe o no tiene datos")
+    })
     @GetMapping("/{author}/{bpname}")
     public ResponseEntity<?> byAuthorAndName(@PathVariable String author, @PathVariable String bpname) {
         try {
@@ -49,6 +66,11 @@ public class BlueprintsAPIController {
     }
 
     // POST /blueprints
+    @Operation(summary = "Lista por autor y pname")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Creacion"),
+            @ApiResponse(responseCode = "400", description = "Datos invalidos")
+    })
     @PostMapping
     public ResponseEntity<?> add(@Valid @RequestBody NewBlueprintRequest req) {
         try {
@@ -61,6 +83,12 @@ public class BlueprintsAPIController {
     }
 
     // PUT /blueprints/{author}/{bpname}/points
+    @Operation(summary = "agregar un punto")
+    @ApiResponses({
+            @ApiResponse(responseCode = "202", description = "Se actualizo exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Punto invalido"),
+            @ApiResponse(responseCode = "404", description = "No se encontro")
+    })
     @PutMapping("/{author}/{bpname}/points")
     public ResponseEntity<?> addPoint(@PathVariable String author, @PathVariable String bpname,
                                       @RequestBody Point p) {
